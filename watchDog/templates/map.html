@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block content %}
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #canvas {
+      position: absolute;
+      top: 100px;
+      left: 0;
+      z-index: 9999;
+    }
+  </style>
+<a href="{{url_for('dashboard')}}">dashboard</a>
+<canvas id="canvas"></canvas>
+
+  <script>
+    $(document).ready(function() {
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      $(window).resize(function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      });
+
+      var img = new Image();
+      img.src = '../static/map.jpg';
+
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      };
+
+      $(document).mousemove(function(event) {
+        var point1 = { x: 200, y: 200 }; // First point
+        var point2 = { x: 200, y: 800 }; // Second point
+        var point3 = { x: 2000, y: 600 }; // Thrid point
+        var cursorPosition = { x: event.pageX, y: event.pageY-100 }; // Cursor position
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        drawLine(point1, cursorPosition);
+        drawLine(point2, cursorPosition);
+        drawLine(point3, cursorPosition);
+      });
+
+      function drawLine(start, end) {
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.strokeStyle = 'blue';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    });
+  </script>
+
+{% endblock %}
