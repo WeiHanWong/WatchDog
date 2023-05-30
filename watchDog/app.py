@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -104,6 +104,18 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
+
+
+@app.route('/api/location', methods=['GET', 'POST'])
+def process_data():
+    data = request.form.get("name")
+    # Return a response
+    response = {
+        'status': 'success',
+        'message': 'Data processed successfully',
+        'data': data
+    }
+    return jsonify(response), 200
 
 
 if __name__ == "__main__":

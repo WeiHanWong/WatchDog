@@ -1,13 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-    }
-
     #canvas {
       position: absolute;
       top: 100px;
@@ -15,9 +8,7 @@
       z-index: 9999;
     }
   </style>
-<a href="{{url_for('dashboard')}}">dashboard</a>
 <canvas id="canvas"></canvas>
-
   <script>
     $(document).ready(function() {
       var canvas = document.getElementById('canvas');
@@ -61,5 +52,4 @@
       }
     });
   </script>
-
 {% endblock %}
