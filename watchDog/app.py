@@ -21,16 +21,43 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return Admin.query.get(int(user_id))
 
 
-class User(db.Model, UserMixin):
+class Admin(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(100), nullable=False)
-    usertype = db.Column(db.Integer, nullable=False)
-    location1 = db.Column(db.Integer, nullable=True)
-    location2 = db.Column(db.Integer, nullable=True)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    Urssi1 = db.Column(db.Integer, nullable=True)
+    Urssi2 = db.Column(db.Integer, nullable=True)
+    Urssi3 = db.Column(db.Integer, nullable=True)
+
+class Area(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    arssi1n = db.Column(db.Integer, nullable=True)
+    arssi1s = db.Column(db.Integer, nullable=True)
+    arssi1e = db.Column(db.Integer, nullable=True)
+    arssi1w = db.Column(db.Integer, nullable=True)
+    arssi2n = db.Column(db.Integer, nullable=True)
+    arssi2s = db.Column(db.Integer, nullable=True)
+    arssi2e = db.Column(db.Integer, nullable=True)
+    arssi2w = db.Column(db.Integer, nullable=True)
+    arssi3n = db.Column(db.Integer, nullable=True)
+    arssi3s = db.Column(db.Integer, nullable=True)
+    arssi3e = db.Column(db.Integer, nullable=True)
+    arssi3w = db.Column(db.Integer, nullable=True)
+
+class UserArea(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", backref=db.backref("user", uselist=False))
+    area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
+    area = db.relationship("Area", backref=db.backref("area", uselist=False))
 
 
 class RegisterForm(FlaskForm):
@@ -43,7 +70,7 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Register')
 
     def validate_username(self, username):
-        existing_user_username = User.query.filter_by(
+        existing_user_username = Admin.query.filter_by(
             username=username.data).first()
         if existing_user_username:
             raise ValidationError(
@@ -60,6 +87,15 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
+class CreateUserForm(FlaskForm):
+    name = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "name"})
+    submit = SubmitField('Create')
+
+    def validate_name(self, name):
+        existing_user = User.query.filter_by(name=name.data).first()
+        if existing_user:
+            raise ValidationError('User already exists!')
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -69,7 +105,7 @@ def home():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = Admin.query.filter_by(username=form.username.data).first()
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
@@ -103,12 +139,33 @@ def register():
 
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(username=form.username.data, password=hashed_password.decode("utf-8", "ignore"), usertype=1)
+        new_user = Admin(username=form.username.data, password=hashed_password.decode("utf-8", "ignore"))
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
 
     return render_template('register.html', form=form)
+
+
+@app.route('/test', methods=['GET', 'POST'])
+@login_required
+def test():
+    users = User.query.all()
+    return render_template('test.html', users=users)
+
+
+@app.route('/createuser', methods=['GET', 'POST'])
+@login_required
+def createuser():
+    form = CreateUserForm()
+
+    if form.validate_on_submit():
+        new_user = User(name=form.name.data)
+        db.session.add(new_user)
+        db.session.commit()
+        return redirect(url_for('test'))
+
+    return render_template('createuser.html', form=form)
 
 
 @app.route('/api/location', methods=['GET', 'POST'])
@@ -122,6 +179,10 @@ def process_data():
     }
     return jsonify(response), 200
 
+# @app.after_request
+# def add_header(response):
+#     response.headers['Cache-Control'] = 'no-cache, no-store'
+
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=80)

@@ -1,0 +1,48 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../static/bootstrap.min.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WatchDog</title>
+    <style>
+        .btn-create {
+            background-color: #343a40;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row mb-3">
+            <div class="col text-right">
+                <a href="{{ url_for('createuser') }}" class="btn btn-create">Create User</a>
+            </div>
+        </div>
+        <h1>Users:</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Distance 1</th>
+                    <th>Distance 2</th>
+                    <th>Distance 3</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.Urssi1 }}</td>
+                    <td>{{ user.Urssi2 }}</td>
+                    <td>{{ user.Urssi3 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="../static/jquery-3.7.0.min.js"></script>
+    <script src="../static/popper.min.js"></script>
+    <script src="../static/bootstrap.bundle.min.js"></script>
+</body>
+</html>
