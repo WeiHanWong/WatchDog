@@ -88,7 +88,7 @@ class LoginForm(FlaskForm):
 
 
 class CreateUserForm(FlaskForm):
-    name = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "name"})
+    name = StringField(validators=[InputRequired(), Length(min=1, max=100)], render_kw={"placeholder": "name"})
     submit = SubmitField('Create')
 
     def validate_name(self, name):
@@ -168,16 +168,30 @@ def createuser():
     return render_template('createuser.html', form=form)
 
 
-@app.route('/api/location', methods=['GET', 'POST'])
+@app.route('/api/urssi', methods=['GET', 'POST'])
 def process_data():
-    data = request.form.get("name")
-    # Return a response
-    response = {
-        'status': 'success',
-        'message': 'Data processed successfully',
-        'data': data
-    }
-    return jsonify(response), 200
+    try:
+        probe = request.form.get("probe")
+        name = request.form.get("name")
+        urssi = request.form.get("urssi")
+        user = User.query.filter_by(name=name).first()
+        match probe:
+            case "1":
+                user.Urssi1 = int(urssi)
+            case "2":
+                user.Urssi2 = int(urssi)
+            case "3":
+                user.Urssi3 = int(urssi)
+        db.session.commit()
+        response = {
+            'status': 'success'
+        }
+        return jsonify(response), 200
+    except:
+        response = {
+            'status': 'fail'
+        }
+        return jsonify(response), 400
 
 # @app.after_request
 # def add_header(response):
