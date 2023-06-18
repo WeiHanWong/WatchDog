@@ -201,6 +201,19 @@ def process_data():
             'status': 'fail'
         }
         return jsonify(response), 400
+        
+@app.route('/api/uuidrequest', methods=['GET', 'POST'])
+def uuidrequest():
+    try:
+        name = request.form.get("name")
+        user = User.query.filter_by(name=name).first()
+        response = {
+            'uuid': user.uuid
+        }
+        return jsonify(response), 200
+    except:
+        response = {}
+        return jsonify(response), 400
 
 # @app.after_request
 # def add_header(response):
