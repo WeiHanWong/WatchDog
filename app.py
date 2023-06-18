@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, render_template, url_for, redirect, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -5,8 +6,12 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
-#from flask_user import roles_required
+import uuid
 
+def generate_uuid():
+    return uuid.uuid4()
+
+#from flask_user import roles_required
 app = Flask(__name__)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -32,9 +37,11 @@ class Admin(db.Model, UserMixin):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
+    uuid = db.Column(db.String(50), nullable=False, unique=True)
     Urssi1 = db.Column(db.Integer, nullable=True)
     Urssi2 = db.Column(db.Integer, nullable=True)
     Urssi3 = db.Column(db.Integer, nullable=True)
+    time = db.Column(db.String(50), nullable=False)
 
 class Area(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -160,7 +167,7 @@ def createuser():
     form = CreateUserForm()
 
     if form.validate_on_submit():
-        new_user = User(name=form.name.data)
+        new_user = User(name=form.name.data, uuid=generate_uuid(), time=str(datetime.now()))
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('test'))
@@ -172,9 +179,10 @@ def createuser():
 def process_data():
     try:
         probe = request.form.get("probe")
-        name = request.form.get("name")
+        uuid = request.form.get("uuid")
         urssi = request.form.get("urssi")
-        user = User.query.filter_by(name=name).first()
+        time = request.form.get("time")
+        user = User.query.filter_by(uuid=uuid).first()
         match probe:
             case "1":
                 user.Urssi1 = int(urssi)
@@ -182,6 +190,7 @@ def process_data():
                 user.Urssi2 = int(urssi)
             case "3":
                 user.Urssi3 = int(urssi)
+        user.time = time
         db.session.commit()
         response = {
             'status': 'success'

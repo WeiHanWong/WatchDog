@@ -24,18 +24,22 @@
             <thead>
                 <tr>
                     <th>User</th>
+                    <th>UUID</th>
                     <th>Distance 1</th>
                     <th>Distance 2</th>
                     <th>Distance 3</th>
+                    <th>Time</th>
                 </tr>
             </thead>
             <tbody>
                 {% for user in users %}
                 <tr>
                     <td>{{ user.name }}</td>
+                    <td>{{ user.uuid }}</td>
                     <td>{{ user.Urssi1 }}</td>
                     <td>{{ user.Urssi2 }}</td>
                     <td>{{ user.Urssi3 }}</td>
+                    <td>{{ user.time }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
