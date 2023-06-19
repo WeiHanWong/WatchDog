@@ -70,14 +70,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     boolean isEmail(EditText text) {
         CharSequence email = text.getText().toString();
-        return (!TextUtils.isEmpty(email) && !Patterns.EMAIL_ADDRESS.matcher(email).matches());
+        return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
 
     private void chkRegCredentials() {
         if (isEmpty(nameTxt) || isEmpty(emailTxt) || isEmpty(pwdTxt) || isEmpty(confirmPwdTxt)) {
             Toast.makeText(this, "Please fill in the fields!",
                     Toast.LENGTH_SHORT).show();
-        } else if (isEmail(emailTxt)) {
+        } else if (!isEmail(emailTxt)) {
             Toast.makeText(this, "Invalid email address", Toast.LENGTH_SHORT).show();
         } else if (!pwdTxt.getText().toString().equals(confirmPwdTxt.getText().toString())) {
             Toast.makeText(this, "Password does not match", Toast.LENGTH_SHORT).show();
@@ -88,7 +88,9 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void register() {
-
+        Intent intent = new Intent(RegisterActivity.this, MainMenu.class);
+        startActivity(intent);
+        finish();
     }
 
 }

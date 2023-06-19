@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/dashboard_menu"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="Dashboard" />
+    <item
+        android:id="@+id/locations_menu"
+        android:icon="@drawable/ic_location_24dp"
+        android:title="Locations" />
+    <item
+        android:id="@+id/about_menu"
+        android:icon="@drawable/ic_about_black_24dp"
+        android:title="About" />
+</menu>

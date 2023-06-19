@@ -81,14 +81,14 @@ public class LoginActivity extends AppCompatActivity {
 
     boolean isEmail(EditText text) {
         CharSequence email = text.getText().toString();
-        return (!TextUtils.isEmpty(email) && !Patterns.EMAIL_ADDRESS.matcher(email).matches());
+        return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
 
     private void chkLoginCredentials() {
         if (isEmpty(emailTxt) || isEmpty(pwdTxt)) {
             Toast.makeText(this, "Please fill in the fields!",
                     Toast.LENGTH_SHORT).show();
-        } else if (isEmail(emailTxt)) {
+        } else if (!isEmail(emailTxt)) {
             Toast.makeText(this, "Invalid email address", Toast.LENGTH_SHORT).show();
         } else {
             login();
@@ -96,7 +96,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
-
+        Intent intent = new Intent(LoginActivity.this, MainMenu.class);
+        startActivity(intent);
+        finish();
     }
 
 }
