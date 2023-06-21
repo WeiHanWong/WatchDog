@@ -3,8 +3,8 @@ from flask import Flask, render_template, url_for, redirect, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, IntegerField
+from wtforms.validators import InputRequired, Length, ValidationError, NumberRange
 from flask_bcrypt import Bcrypt
 import uuid
 
@@ -15,8 +15,8 @@ def generate_uuid():
 app = Flask(__name__)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:X@localhost:5432/watchdog'
-app.config['SECRET_KEY'] = 'X'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Z@localhost:5432/watchdog'
+app.config['SECRET_KEY'] = 'Z'
 
 
 login_manager = LoginManager()
@@ -102,6 +102,28 @@ class CreateUserForm(FlaskForm):
         existing_user = User.query.filter_by(name=name.data).first()
         if existing_user:
             raise ValidationError('User already exists!')
+        
+
+class CreateAreaForm(FlaskForm):
+    name = StringField(validators=[InputRequired(), Length(min=1, max=100)], render_kw={"placeholder": "area name"})
+    arssi1n = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi1s = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi1e = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi1w = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi2n = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi2s = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi2e = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi2w = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi3n = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi3s = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi3e = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    arssi3w = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    submit = SubmitField('Create')
+
+    def validate_name(self, name):
+        existing_area = Area.query.filter_by(name=name.data).first()
+        if existing_area:
+            raise ValidationError('Area already exists!')
 
 @app.route('/')
 def home():
@@ -158,7 +180,9 @@ def register():
 @login_required
 def test():
     users = User.query.all()
-    return render_template('test.html', users=users)
+    areas = Area.query.all()
+    userareas = UserArea.query.all()
+    return render_template('test.html', users=users, areas=areas, userareas = userareas)
 
 
 @app.route('/createuser', methods=['GET', 'POST'])
@@ -173,6 +197,34 @@ def createuser():
         return redirect(url_for('test'))
 
     return render_template('createuser.html', form=form)
+
+
+@app.route('/createarea', methods=['GET', 'POST'])
+@login_required
+def createarea():
+    form = CreateAreaForm()
+
+    if form.validate_on_submit():
+        new_area = Area(name=form.name.data,
+                        arssi1n=form.arssi1n.data,
+                        arssi1s=form.arssi1s.data,
+                        arssi1e=form.arssi1e.data,
+                        arssi1w=form.arssi1w.data,
+                        arssi2n=form.arssi2n.data,
+                        arssi2s=form.arssi2s.data,
+                        arssi2e=form.arssi2e.data,
+                        arssi2w=form.arssi2w.data,
+                        arssi3n=form.arssi3n.data,
+                        arssi3s=form.arssi3s.data,
+                        arssi3e=form.arssi3e.data,
+                        arssi3w=form.arssi3w.data)
+        db.session.add(new_area)
+        db.session.commit()
+        return redirect(url_for('test'))
+
+    return render_template('createarea.html', form=form)
+
+
 
 
 @app.route('/api/urssi', methods=['GET', 'POST'])

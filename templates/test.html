@@ -45,6 +45,59 @@
             </tbody>
         </table>
     </div>
+    <div class="container mt-5">
+        <div class="row mb-3">
+            <div class="col text-right">
+                <a href="{{ url_for('createarea') }}" class="btn btn-create">New Area</a>
+            </div>
+        </div>
+        <h1>Area:</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Area</th>
+                    <th>Boundary 1</th>
+                    <th>Boundary 2</th>
+                    <th>Boundary 3</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for area in areas %}
+                <tr>
+                    <td>{{ area.name }}</td>
+                    <td>{{ area.arssi1n }}, {{ area.arssi1s }}, {{ area.arssi1e }}, {{ area.arssi1w }}</td>
+                    <td>{{ area.arssi2n }}, {{ area.arssi2s }}, {{ area.arssi2e }}, {{ area.arssi2w }}</td>
+                    <td>{{ area.arssi3n }}, {{ area.arssi3s }}, {{ area.arssi3e }}, {{ area.arssi3w }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container mt-5">
+        <div class="row mb-3">
+            <div class="col text-right">
+                <a href="{{ url_for('createuser') }}" class="btn btn-create">New Access</a>
+            </div>
+        </div>
+        <h1>User Area Access:</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Area</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for userarea in userareas %}
+                <tr>
+                    <td>{{ userarea.user }}</td>
+                    <td>{{ userarea.area }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
     <script src="../static/jquery-3.7.0.min.js"></script>
     <script src="../static/popper.min.js"></script>
     <script src="../static/bootstrap.bundle.min.js"></script>

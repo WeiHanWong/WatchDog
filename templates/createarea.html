@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="../static/bootstrap.min.css">
+    <script src="../static/jquery-3.7.0.min.js"></script>
+    <script src="../static/popper.min.js"></script>
+    <script src="../static/bootstrap.bundle.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WatchDog</title>
+    <link rel="stylesheet" href="../static/bulma.min.css" />
+</head>
+
+<body>
+    <!-- <h1>Create Area</h1>
+
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        {{ form.name }}
+        {{ form.arssi1n }}
+        {{ form.arssi1s }}
+        {{ form.arssi1e }}
+        {{ form.arssi1w }}
+        {{ form.arssi2n }}
+        {{ form.arssi2s }}
+        {{ form.arssi2e }}
+        {{ form.arssi2w }}
+        {{ form.arssi3n }}
+        {{ form.arssi3s }}
+        {{ form.arssi3e }}
+        {{ form.arssi3w }}
+        {{ form.submit }}
+    </form> -->
+    <div class="container">
+        <h1>Create Area</h1>
+
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <label for="name">Name:</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                <label for="arssi1n">ARSSI1N:</label>
+                {{ form.arssi1n }}
+            </div>
+            <div class="form-group">
+                <label for="arssi1s">ARSSI1S:</label>
+                {{ form.arssi1s }}
+            </div>
+            <div class="form-group">
+                <label for="arssi1e">ARSSI1E:</label>
+                {{ form.arssi1e }}
+            </div>
+            <div class="form-group">
+                <label for="arssi1w">ARSSI1W:</label>
+                {{ form.arssi1w }}
+            </div>
+            <div class="form-group">
+                <label for="arssi2n">ARSSI2N:</label>
+                {{ form.arssi2n }}
+            </div>
+            <div class="form-group">
+                <label for="arssi2s">ARSSI2S:</label>
+                {{ form.arssi2s }}
+            </div>
+            <div class="form-group">
+                <label for="arssi2e">ARSSI2E:</label>
+                {{ form.arssi2e }}
+            </div>
+            <div class="form-group">
+                <label for="arssi2w">ARSSI2W:</label>
+                {{ form.arssi2w }}
+            </div>
+            <div class="form-group">
+                <label for="arssi3n">ARSSI3N:</label>
+                {{ form.arssi3n }}
+            </div>
+            <div class="form-group">
+                <label for="arssi3s">ARSSI3S:</label>
+                {{ form.arssi3s }}
+            </div>
+            <div class="form-group">
+                <label for="arssi3e">ARSSI3E:</label>
+                {{ form.arssi3e }}
+            </div>
+            <div class="form-group">
+                <label for="arssi3w">ARSSI3W:</label>
+                {{ form.arssi3w }}
+            </div>
+            
+            {{ form.submit }}
+        </form>
+    </div>
+
+</body>
+
+</html>
