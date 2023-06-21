@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for, redirect, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, SelectField
 from wtforms.validators import InputRequired, Length, ValidationError, NumberRange
 from flask_bcrypt import Bcrypt
 import uuid
@@ -15,14 +15,13 @@ def generate_uuid():
 app = Flask(__name__)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Z@localhost:5432/watchdog'
-app.config['SECRET_KEY'] = 'Z'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:X@localhost:5432/watchdog'
+app.config['SECRET_KEY'] = 'X'
 
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -42,6 +41,7 @@ class User(db.Model):
     Urssi2 = db.Column(db.Integer, nullable=True)
     Urssi3 = db.Column(db.Integer, nullable=True)
     time = db.Column(db.String(50), nullable=False)
+    userarea = db.relationship("UserArea", backref='user')
 
 class Area(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -58,13 +58,12 @@ class Area(db.Model):
     arssi3s = db.Column(db.Integer, nullable=True)
     arssi3e = db.Column(db.Integer, nullable=True)
     arssi3w = db.Column(db.Integer, nullable=True)
+    userarea = db.relationship("UserArea", backref='area')
 
 class UserArea(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship("User", backref=db.backref("user", uselist=False))
     area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
-    area = db.relationship("Area", backref=db.backref("area", uselist=False))
 
 
 class RegisterForm(FlaskForm):
@@ -125,6 +124,21 @@ class CreateAreaForm(FlaskForm):
         if existing_area:
             raise ValidationError('Area already exists!')
 
+
+class CreateUserAreaForm(FlaskForm):
+    name = SelectField(choices = [value[0] for value in db.session.query(User.name)], validators = [InputRequired()])
+    area = SelectField(choices = [value[0] for value in db.session.query(Area.name)], validators = [InputRequired()])
+    submit = SubmitField('Create')
+
+    def validate_name(self, name):
+        existing_user = User.query.filter_by(name=name.data).first()
+        if not existing_user:
+            raise ValidationError('User does not exists!')
+    def validate_area(self, area):
+        existing_area = Area.query.filter_by(name=area.data).first()
+        if not existing_area:
+            raise ValidationError('Area does not exists!')
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -181,7 +195,7 @@ def register():
 def test():
     users = User.query.all()
     areas = Area.query.all()
-    userareas = UserArea.query.all()
+    userareas = UserArea.query.all()    
     return render_template('test.html', users=users, areas=areas, userareas = userareas)
 
 
@@ -225,6 +239,21 @@ def createarea():
     return render_template('createarea.html', form=form)
 
 
+@app.route('/createuserarea', methods=['GET', 'POST'])
+@login_required
+def createuserarea():
+    form = CreateUserAreaForm()
+
+    if form.validate_on_submit():
+        
+        user=User.query.filter_by(name=form.name.data).first()
+        area=Area.query.filter_by(name=form.area.data).first()
+        new_user_area = UserArea(user_id=user.id, area_id=area.id)
+        db.session.add(new_user_area)
+        db.session.commit()
+        return redirect(url_for('test'))
+
+    return render_template('createuserarea.html', form=form)
 
 
 @app.route('/api/urssi', methods=['GET', 'POST'])

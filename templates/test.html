@@ -76,7 +76,7 @@
     <div class="container mt-5">
         <div class="row mb-3">
             <div class="col text-right">
-                <a href="{{ url_for('createuser') }}" class="btn btn-create">New Access</a>
+                <a href="{{ url_for('createuserarea') }}" class="btn btn-create">New Access</a>
             </div>
         </div>
         <h1>User Area Access:</h1>
@@ -90,8 +90,8 @@
             <tbody>
                 {% for userarea in userareas %}
                 <tr>
-                    <td>{{ userarea.user }}</td>
-                    <td>{{ userarea.area }}</td>
+                    <td>{{ userarea.user.name }}</td>
+                    <td>{{ userarea.area.name }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
