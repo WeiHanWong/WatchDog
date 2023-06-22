@@ -16,8 +16,8 @@ def generate_uuid():
 app = Flask(__name__)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:X@localhost:5432/watchdog'
-app.config['SECRET_KEY'] = 'X'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost:5432/watchdog'
+app.config['SECRET_KEY'] = '1c10e6fcfd0e588853fd447f377e992a'
 
 
 login_manager = LoginManager()
@@ -43,7 +43,6 @@ class User(db.Model):
     Urssi3 = db.Column(db.Integer, nullable=True)
     time = db.Column(db.String(50), nullable=False)
     userarea = db.relationship("UserArea", backref='user')
-    userdoor = db.relationship("UserDoor", backref='user')
 
 class Area(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -79,23 +78,12 @@ class Door(db.Model):
     drssi21 = db.Column(db.Integer, nullable=True)
     drssi22 = db.Column(db.Integer, nullable=True)
     drssi23 = db.Column(db.Integer, nullable=True)
-    userdoor = db.relationship("UserDoor", backref='door') 
-
-
-class UserDoor(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    door_id = db.Column(db.Integer, db.ForeignKey('door.id'))
     
 
 
 class RegisterForm(FlaskForm):
-    username = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
-
-    password = PasswordField(validators=[
-                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+    password = PasswordField(validators=[InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
     submit = SubmitField('Register')
 
     def validate_username(self, username):
@@ -107,12 +95,8 @@ class RegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    username = StringField(validators=[
-                           InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
-
-    password = PasswordField(validators=[
-                             InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-
+    username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
+    password = PasswordField(validators=[InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
     submit = SubmitField('Login')
 
 
@@ -148,9 +132,31 @@ class CreateAreaForm(FlaskForm):
             raise ValidationError('Area already exists!')
 
 
-class CreateUserAreaForm(FlaskForm):
-    name = SelectField(choices = [value[0] for value in db.session.query(User.name)], validators = [InputRequired()])
+class CreateDoorForm(FlaskForm):
+    name = StringField(validators=[InputRequired(), Length(min=1, max=100)], render_kw={"placeholder": "door name"})
+    drssi11 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    drssi12 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    drssi13 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    drssi21 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    drssi22 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
+    drssi23 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
     area = SelectField(choices = [value[0] for value in db.session.query(Area.name)], validators = [InputRequired()])
+    submit = SubmitField('Create')
+
+    def validate_name(self, name):
+        existing_door = Door.query.filter_by(name=name.data).first()
+        if existing_door:
+            raise ValidationError('Door already exists!')
+
+    def validate_area(self, area):
+        existing_area = Area.query.filter_by(name=area.data).first()
+        if not existing_area:
+            raise ValidationError('Area does not exists!')
+
+
+class CreateUserAreaForm(FlaskForm):
+    name = SelectField(choices = [value[0] for value in User.query.with_entities(User.name)], validators = [InputRequired()])
+    area = SelectField(choices = [value[0] for value in Area.query.with_entities(Area.name)], validators = [InputRequired()])
     submit = SubmitField('Create')
 
     def validate_name(self, name):
@@ -218,8 +224,9 @@ def register():
 def test():
     users = User.query.all()
     areas = Area.query.all()
-    userareas = UserArea.query.all()    
-    return render_template('test.html', users=users, areas=areas, userareas = userareas)
+    userareas = UserArea.query.all() 
+    doors = Door.query.all()   
+    return render_template('test.html', users=users, areas=areas, userareas = userareas, doors=doors)
 
 
 @app.route('/createuser', methods=['GET', 'POST'])
@@ -260,6 +267,28 @@ def createarea():
         return redirect(url_for('test'))
 
     return render_template('createarea.html', form=form)
+
+
+@app.route('/createdoor', methods=['GET', 'POST'])
+@login_required
+def createdoor():
+    form = CreateDoorForm()
+
+    if form.validate_on_submit():
+        area=Area.query.filter_by(name=form.area.data).first()
+        new_door = Door(name=form.name.data,
+                        drssi11=form.drssi11.data,
+                        drssi12=form.drssi12.data,
+                        drssi13=form.drssi13.data,
+                        drssi21=form.drssi21.data,
+                        drssi22=form.drssi22.data,
+                        drssi23=form.drssi23.data,
+                        area_id=area.id)
+        db.session.add(new_door)
+        db.session.commit()
+        return redirect(url_for('test'))
+
+    return render_template('createdoor.html', form=form)
 
 
 @app.route('/createuserarea', methods=['GET', 'POST'])
