@@ -7,6 +7,7 @@ from wtforms import StringField, PasswordField, SubmitField, IntegerField, Selec
 from wtforms.validators import InputRequired, Length, ValidationError, NumberRange
 from flask_bcrypt import Bcrypt
 import uuid
+import requests
 
 def generate_uuid():
     return uuid.uuid4()
@@ -42,6 +43,7 @@ class User(db.Model):
     Urssi3 = db.Column(db.Integer, nullable=True)
     time = db.Column(db.String(50), nullable=False)
     userarea = db.relationship("UserArea", backref='user')
+    userdoor = db.relationship("UserDoor", backref='user')
 
 class Area(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -59,11 +61,32 @@ class Area(db.Model):
     arssi3e = db.Column(db.Integer, nullable=True)
     arssi3w = db.Column(db.Integer, nullable=True)
     userarea = db.relationship("UserArea", backref='area')
+    door = db.relationship("Door", backref='area')
+    
 
 class UserArea(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
+
+class Door(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
+    drssi11 = db.Column(db.Integer, nullable=True)
+    drssi12 = db.Column(db.Integer, nullable=True)
+    drssi13 = db.Column(db.Integer, nullable=True)
+    drssi21 = db.Column(db.Integer, nullable=True)
+    drssi22 = db.Column(db.Integer, nullable=True)
+    drssi23 = db.Column(db.Integer, nullable=True)
+    userdoor = db.relationship("UserDoor", backref='door') 
+
+
+class UserDoor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    door_id = db.Column(db.Integer, db.ForeignKey('door.id'))
+    
 
 
 class RegisterForm(FlaskForm):
@@ -295,7 +318,13 @@ def uuidrequest():
     except:
         response = {}
         return jsonify(response), 400
+    
 
+@app.route('/api/opendoor', methods=['GET', 'POST'])
+def opendoor():
+    payload = {}
+
+    requests.post('/api/opendoor', data=payload)
 # @app.after_request
 # def add_header(response):
 #     response.headers['Cache-Control'] = 'no-cache, no-store'
