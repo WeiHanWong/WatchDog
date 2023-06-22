@@ -49,6 +49,7 @@
         <div class="row mb-3">
             <div class="col text-right">
                 <a href="{{ url_for('createarea') }}" class="btn btn-create">New Area</a>
+                <a href="{{ url_for('createdoor') }}" class="btn btn-create">New Door</a>
             </div>
         </div>
         <h1>Area:</h1>
@@ -59,15 +60,38 @@
                     <th>Boundary 1</th>
                     <th>Boundary 2</th>
                     <th>Boundary 3</th>
+                    <th>Boundary 4</th>
                 </tr>
             </thead>
             <tbody>
                 {% for area in areas %}
                 <tr>
                     <td>{{ area.name }}</td>
-                    <td>{{ area.arssi1n }}, {{ area.arssi1s }}, {{ area.arssi1e }}, {{ area.arssi1w }}</td>
-                    <td>{{ area.arssi2n }}, {{ area.arssi2s }}, {{ area.arssi2e }}, {{ area.arssi2w }}</td>
-                    <td>{{ area.arssi3n }}, {{ area.arssi3s }}, {{ area.arssi3e }}, {{ area.arssi3w }}</td>
+                    <td>{{ area.arssi1n }}, {{ area.arssi2n }}, {{ area.arssi3n }}</td>
+                    <td>{{ area.arssi1s }}, {{ area.arssi2s }}, {{ area.arssi3s }}</td>
+                    <td>{{ area.arssi1e }}, {{ area.arssi2e }}, {{ area.arssi3e }}</td>
+                    <td>{{ area.arssi1w }}, {{ area.arssi2w }}, {{ area.arssi3w }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h1>Door:</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Door</th>
+                    <th>Assigned Area</th>
+                    <th>Entrance</th>
+                    <th>Exit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for door in doors %}
+                <tr>
+                    <td>{{ door.name }}</td>
+                    <td>{{ door.area.name }}</td>
+                    <td>{{ door.drssi11 }}, {{ door.drssi12 }}, {{ door.drssi13 }}</td>
+                    <td>{{ door.drssi21 }}, {{ door.drssi22 }}, {{ door.drssi23 }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
