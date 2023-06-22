@@ -16,8 +16,8 @@ def generate_uuid():
 app = Flask(__name__)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@localhost:5432/watchdog'
-app.config['SECRET_KEY'] = '1c10e6fcfd0e588853fd447f377e992a'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:X@localhost:5432/watchdog'
+app.config['SECRET_KEY'] = 'X'
 
 
 login_manager = LoginManager()
@@ -139,8 +139,13 @@ class CreateDoorForm(FlaskForm):
     drssi13 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
     drssi21 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
     drssi22 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
-    drssi23 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])
-    area = SelectField(choices = [value[0] for value in db.session.query(Area.name)], validators = [InputRequired()])
+    drssi23 = IntegerField(validators=[InputRequired(), NumberRange(min=-90, max=0)])    
+    area = SelectField(validators=[InputRequired()])
+
+    def __init__(self, *args, **kwargs):
+        super(CreateDoorForm, self).__init__(*args, **kwargs)
+        self.area.choices = [value[0] for value in db.session.query(Area.name)]
+    
     submit = SubmitField('Create')
 
     def validate_name(self, name):
@@ -155,8 +160,14 @@ class CreateDoorForm(FlaskForm):
 
 
 class CreateUserAreaForm(FlaskForm):
-    name = SelectField(choices = [value[0] for value in User.query.with_entities(User.name)], validators = [InputRequired()])
-    area = SelectField(choices = [value[0] for value in Area.query.with_entities(Area.name)], validators = [InputRequired()])
+
+    name = SelectField(validators=[InputRequired()])
+    area = SelectField(validators=[InputRequired()])
+    def __init__(self, *args, **kwargs):
+        super(CreateUserAreaForm, self).__init__(*args, **kwargs)
+        self.name.choices = [value[0] for value in User.query.with_entities(User.name)]
+        self.area.choices = [value[0] for value in db.session.query(Area.name)]
+
     submit = SubmitField('Create')
 
     def validate_name(self, name):
