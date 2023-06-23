@@ -9,6 +9,7 @@ from flask_bcrypt import Bcrypt
 import uuid
 import requests
 import time
+import threading
 
 def generate_uuid():
     return uuid.uuid4()
@@ -361,13 +362,17 @@ def uuidrequest():
         response = {}
         return jsonify(response), 400
     
-def opendoor():
-    print("open")
-    # requests.get('http://127.0.0.1/api/open')
+def doorops(arg):
+    match arg:
+        case "open":
+            print("open")
+            # requests.get('http://127.0.0.1/api/open')
+            time.sleep(5)
+            doorops("close")
+        case "close":
+            print("close")
+            # requests.get('http://127.0.0.1/api/close')
 
-def closedoor():
-    print("close")
-    # requests.get('http://127.0.0.1/api/close')
 
 @app.route('/api/gettime', methods=['GET'])
 def gettime():
@@ -383,9 +388,8 @@ def checklocation(uuid):
     area_id = UserArea.query.filter_by(user_id=user_id).first().user_id
     door = Door.query.filter_by(area_id=area_id).first()
     if (door.drssi11 == user.Urssi1 and door.drssi12 == user.Urssi2 and door.drssi13 == user.Urssi3) or (door.drssi21 == user.Urssi1 and door.drssi22 == user.Urssi2 and door.drssi23 == user.Urssi3):
-        opendoor()
-        time.sleep(5)
-        closedoor()
+        thread = threading.Thread(target=doorops, args=("open",))
+        thread.start()
     
 
 
