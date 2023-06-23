@@ -8,6 +8,7 @@ from wtforms.validators import InputRequired, Length, ValidationError, NumberRan
 from flask_bcrypt import Bcrypt
 import uuid
 import requests
+import time
 
 def generate_uuid():
     return uuid.uuid4()
@@ -16,8 +17,8 @@ def generate_uuid():
 app = Flask(__name__)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:X@localhost:5432/watchdog'
-app.config['SECRET_KEY'] = 'X'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost:5432/watchdog'
+app.config['SECRET_KEY'] = ''
 
 
 login_manager = LoginManager()
@@ -336,6 +337,7 @@ def process_data():
                 user.Urssi3 = int(urssi)
         user.time = time
         db.session.commit()
+        checklocation(uuid)
         response = {
             'status': 'success'
         }
@@ -359,16 +361,36 @@ def uuidrequest():
         response = {}
         return jsonify(response), 400
     
-
-@app.route('/api/opendoor', methods=['GET', 'POST'])
 def opendoor():
-    payload = {}
+    print("open")
+    # requests.get('http://127.0.0.1/api/open')
 
-    requests.post('/api/opendoor', data=payload)
+def closedoor():
+    print("close")
+    # requests.get('http://127.0.0.1/api/close')
+
+@app.route('/api/gettime', methods=['GET'])
+def gettime():
+    response = {
+        'time': str(datetime.now())
+    }
+    return jsonify(response), 200
+
+
+def checklocation(uuid):
+    user = User.query.filter_by(uuid=uuid).first()
+    user_id = user.id
+    area_id = UserArea.query.filter_by(user_id=user_id).first().user_id
+    door = Door.query.filter_by(area_id=area_id).first()
+    if (door.drssi11 == user.Urssi1 and door.drssi12 == user.Urssi2 and door.drssi13 == user.Urssi3) or (door.drssi21 == user.Urssi1 and door.drssi22 == user.Urssi2 and door.drssi23 == user.Urssi3):
+        opendoor()
+        time.sleep(5)
+        closedoor()
+    
+
+
 # @app.after_request
 # def add_header(response):
 #     response.headers['Cache-Control'] = 'no-cache, no-store'
-
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80)
+    app.run(host="0.0.0.0", port=80, debug=True)
