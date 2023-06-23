@@ -1,74 +1,83 @@
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEScan.h>
+#include <BLEAdvertisedDevice.h>
+#include <BLEBeacon.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-const char* ssid = "X";
-const char* password = "X";
-
-//Your Domain name with URL path or IP address with path
+const char* ssid = "";
+const char* password = "";
 const char* serverName = "http://X/api/urssi";
+const char* ntpName = "http://X/api/gettime";
+const String probeid = "1";
 
-// the following variables are unsigned longs because the time, measured in
-// milliseconds, will quickly become a bigger number than can be stored in an int.
-unsigned long lastTime = 0;
-// Timer set to 10 minutes (600000)
-//unsigned long timerDelay = 600000;
-// Set timer to 5 seconds (5000)
-unsigned long timerDelay = 5000;
+int scanTime = 5; //In seconds
+BLEScan *pBLEScan;
 
-void setup() {
+class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
+{
+    void onResult(BLEAdvertisedDevice advertisedDevice)
+    {
+      if (advertisedDevice.haveServiceUUID())
+      {
+        BLEUUID devUUID = advertisedDevice.getServiceUUID();
+      }
+      
+      if (advertisedDevice.haveManufacturerData() == true)
+      {
+        std::string strManufacturerData = advertisedDevice.getManufacturerData();
+
+        uint8_t cManufacturerData[100];
+        strManufacturerData.copy((char *)cManufacturerData, strManufacturerData.length(), 0);
+
+        if (strManufacturerData.length() == 25 && cManufacturerData[0] == 0x4C && cManufacturerData[1] == 0x00)
+        {
+          BLEBeacon oBeacon = BLEBeacon();
+          oBeacon.setData(strManufacturerData);
+          if(WiFi.status()== WL_CONNECTED){
+            WiFiClient client;
+            HTTPClient http;
+
+            http.begin(client, ntpName);
+            http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+            String httpRequestData = "";           
+            int httpResponseCode = http.POST(httpRequestData);
+            String payload = "";
+            if (httpResponseCode==200) {
+              payload = http.getString();
+            }
+            http.end();
+
+            http.begin(client, serverName);
+            http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+            httpRequestData = "probe=" + probeid + "&uuid=" + oBeacon.getProximityUUID().toString().c_str() + "&urssi=" + oBeacon.getSignalPower() + "&time=" + payload;           
+            httpResponseCode = http.POST(httpRequestData);
+            http.end();
+          }
+        }
+      }
+    }
+};
+
+void setup()
+{
   Serial.begin(115200);
-
   WiFi.begin(ssid, password);
-  Serial.println("Connecting");
   while(WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
   }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  Serial.println(WiFi.localIP());
- 
-  Serial.println("Timer set to 5 seconds (timerDelay variable), it will take 5 seconds before publishing the first reading.");
+  BLEDevice::init("");
+  pBLEScan = BLEDevice::getScan();
+  pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
+  pBLEScan->setActiveScan(true);
+  pBLEScan->setInterval(100);
+  pBLEScan->setWindow(99);
 }
 
-void loop() {
-  //Send an HTTP POST request every 10 minutes
-  if ((millis() - lastTime) > timerDelay) {
-    //Check WiFi connection status
-    if(WiFi.status()== WL_CONNECTED){
-      WiFiClient client;
-      HTTPClient http;
-    
-      // Your Domain name with URL path or IP address with path
-      http.begin(client, serverName);
-      
-      // If you need Node-RED/server authentication, insert user and password below
-      //http.setAuthorization("REPLACE_WITH_SERVER_USERNAME", "REPLACE_WITH_SERVER_PASSWORD");
-      
-      // Specify content-type header
-      http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-      // Data to send with HTTP POST
-      String httpRequestData = "probe=1&uuid=67cd3e9b-e53d-46fe-b9c1-6a1a5080f804&urssi=-90&time=123";           
-      // Send HTTP POST request
-      int httpResponseCode = http.POST(httpRequestData);
-      
-      // If you need an HTTP request with a content type: application/json, use the following:
-      //http.addHeader("Content-Type", "application/json");
-      //int httpResponseCode = http.POST("{\"api_key\":\"tPmAT5Ab3j7F9\",\"sensor\":\"BME280\",\"value1\":\"24.25\",\"value2\":\"49.54\",\"value3\":\"1005.14\"}");
-
-      // If you need an HTTP request with a content type: text/plain
-      //http.addHeader("Content-Type", "text/plain");
-      //int httpResponseCode = http.POST("Hello, World!");
-     
-      Serial.print("HTTP Response code: ");
-      Serial.println(httpResponseCode);
-        
-      // Free resources
-      http.end();
-    }
-    else {
-      Serial.println("WiFi Disconnected");
-    }
-    lastTime = millis();
-  }
+void loop()
+{
+  BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
+  pBLEScan->clearResults();
+  delay(1);
 }
