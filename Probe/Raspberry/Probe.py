@@ -5,7 +5,7 @@ from datetime import datetime
 import requests
 
 # Define the URL of the server
-url = 'http://127.0.0.1/api/urssi'
+url = 'http://X/api/urssi'
 
 def stringify(packet):
     """

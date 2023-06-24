@@ -354,9 +354,7 @@ def uuidrequest():
     try:
         name = request.form.get("name")
         user = User.query.filter_by(name=name).first()
-        response = {
-            'uuid': user.uuid
-        }
+        response = user.uuid
         return jsonify(response), 200
     except:
         response = {}
