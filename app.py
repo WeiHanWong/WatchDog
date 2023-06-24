@@ -18,8 +18,8 @@ def generate_uuid():
 app = Flask(__name__)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost:5432/watchdog'
-app.config['SECRET_KEY'] = ''
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:zhong@localhost:5432/watchdog'
+app.config['SECRET_KEY'] = 'l'
 
 
 login_manager = LoginManager()
@@ -181,11 +181,14 @@ class CreateUserAreaForm(FlaskForm):
         if not existing_area:
             raise ValidationError('Area does not exists!')
 
+"""
 @app.route('/')
 def home():
     return render_template('home.html')
+"""
 
 
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()

@@ -1,29 +1,19 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-    <link rel="stylesheet" href="../static/bootstrap.min.css">
-    <script src="../static/jquery-3.7.0.min.js"></script>
-    <script src="../static/popper.min.js"></script>
-    <script src="../static/bootstrap.bundle.min.js"></script>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WatchDog</title>
-    <link rel="stylesheet" href="../static/bulma.min.css" />
-</head>
+{% block title %} Register {% endblock %}
 
-<body>
-    <h1>Register Page</h1>
-
+{% block content %}
+<div class="container">
+    <h2>Register</h2>
+    <br>
     <form method="POST" action="">
         {{ form.hidden_tag() }}
-        {{ form.username }}
-        {{ form.password }}
-        {{ form.submit }}
+        {{ form.username(class="form-control") }}
+        <br>
+        {{ form.password(class="form-control") }}
+        <br>
+        {{ form.submit(class="btn btn-primary") }}
     </form>
-
-    <a href="{{ url_for('login') }}">Already have an account? Log In</a>
-</body>
-
-</html>
+    Already have an account? <a href="{{ url_for('login') }}">Log In</a>
+</div>
+{% endblock %}

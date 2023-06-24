@@ -1,4 +1,26 @@
 {% extends "layout.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block nav %}
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+            <a class="nav-link" href="{{url_for('dashboard')}}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+             <a class="nav-link" href="{{url_for('map')}}">Interactive Map</a>
+        </li>
+        <li class="nav-item">
+              <a class="nav-link" href="{{url_for('test')}}">API TEST</a>
+        </li>
+    </ul>
+    <form class="d-flex" role="search">
+        <a class="btn btn-outline-success" href="{{url_for('logout')}}">Logout</a>
+    </form>
+</div>
+{% endblock %}
+
 {% block content %}
     <br>
     <div class="container">
@@ -12,7 +34,6 @@
                     <strong>Login time: </strong>09:44:53 pm<br>
                     <strong>Security Clearance: </strong>Admin<br>
                 </p>
-                <!--<a href="#" class="btn btn-primary">Logout</a> -->
             </div>
         </div>
         <br>

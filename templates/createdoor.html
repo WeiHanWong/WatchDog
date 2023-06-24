@@ -1,79 +1,59 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-    <link rel="stylesheet" href="../static/bootstrap.min.css">
-    <script src="../static/jquery-3.7.0.min.js"></script>
-    <script src="../static/popper.min.js"></script>
-    <script src="../static/bootstrap.bundle.min.js"></script>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WatchDog</title>
-    <link rel="stylesheet" href="../static/bulma.min.css" />
-</head>
+{% block title %} Create Door {% endblock %}
 
-<body>
-    <!-- <h1>Create Area</h1>
+{% block nav %}
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+            <a class="nav-link" href="{{url_for('dashboard')}}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+             <a class="nav-link" href="{{url_for('map')}}">Interactive Map</a>
+        </li>
+        <li class="nav-item">
+              <a class="nav-link" href="{{url_for('test')}}">API TEST</a>
+        </li>
+    </ul>
+    <form class="d-flex" role="search">
+        <a class="btn btn-outline-success" href="{{url_for('logout')}}">Logout</a>
+    </form>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Create Door</h2>
 
     <form method="POST" action="">
         {{ form.hidden_tag() }}
-        {{ form.name }}
-        {{ form.arssi1n }}
-        {{ form.arssi1s }}
-        {{ form.arssi1e }}
-        {{ form.arssi1w }}
-        {{ form.arssi2n }}
-        {{ form.arssi2s }}
-        {{ form.arssi2e }}
-        {{ form.arssi2w }}
-        {{ form.arssi3n }}
-        {{ form.arssi3s }}
-        {{ form.arssi3e }}
-        {{ form.arssi3w }}
-        {{ form.submit }}
-    </form> -->
-    <div class="container">
-        <h1>Create Door</h1>
-
-        <form method="POST" action="">
-            {{ form.hidden_tag() }}
             <div class="form-group">
                 <label for="name">Name:</label>
-                {{ form.name }}
-            </div>
-            <div class="form-group">
+                {{ form.name(class="form-control") }}
+                <br>
                 <label for="arssi1n">Entrance Probe1:</label>
-                {{ form.drssi11 }}
-            </div>
-            <div class="form-group">
+                {{ form.drssi11(class="form-control") }}
+                <br>
                 <label for="arssi1s">Entrance Probe2:</label>
-                {{ form.drssi12 }}
-            </div>
-            <div class="form-group">
+                {{ form.drssi12(class="form-control") }}
+                <br>
                 <label for="arssi1e">Entrance Probe3:</label>
-                {{ form.drssi13 }}
-            </div>
-            <div class="form-group">
+                {{ form.drssi13(class="form-control") }}
+                <br>
                 <label for="arssi1w">Exit Probe1:</label>
-                {{ form.drssi21 }}
-            </div>
-            <div class="form-group">
+                {{ form.drssi21(class="form-control") }}
+                <br>
                 <label for="arssi2n">Exit Probe2:</label>
-                {{ form.drssi22 }}
-            </div>
-            <div class="form-group">
+                {{ form.drssi22(class="form-control") }}
+                <br>
                 <label for="arssi2s">Exit Probe3:</label>
-                {{ form.drssi23 }}
-            </div>
-            <div class="form-group">
+                {{ form.drssi23(class="form-control") }}
+                <br>
                 <label for="arssi2s">Assigned Area:</label>
-                {{ form.area }}
+                {{ form.area(class="form-select") }}
             </div>
-            {{ form.submit }}
+            <br>
+            {{ form.submit(class="btn btn-primary") }}
         </form>
-    </div>
-
-</body>
-
-</html>
+</div>
+{% endblock %}

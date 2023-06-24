@@ -1,129 +1,133 @@
-<html>
-<head>
-    <link rel="stylesheet" href="../static/bootstrap.min.css">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>WatchDog</title>
-    <style>
-        .btn-create {
-            background-color: #343a40;
-            color: #fff;
-        }
-    </style>
-</head>
-<body>
-    <div class="container mt-5">
-        <div class="row mb-3">
-            <div class="col text-right">
-                <a href="{{ url_for('createuser') }}" class="btn btn-create">Create User</a>
-            </div>
+{% extends "layout.html" %}
+
+{% block title %} API {% endblock %}
+
+{% block nav %}
+<div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+            <a class="nav-link" href="{{url_for('dashboard')}}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+             <a class="nav-link" href="{{url_for('map')}}">Interactive Map</a>
+        </li>
+        <li class="nav-item">
+              <a class="nav-link" href="{{url_for('test')}}">API TEST</a>
+        </li>
+    </ul>
+    <form class="d-flex" role="search">
+        <a class="btn btn-outline-success" href="{{url_for('logout')}}">Logout</a>
+    </form>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col text-right">
+            <a href="{{ url_for('createuser') }}" class="btn btn-dark">Create User</a>
         </div>
-        <h1>Users:</h1>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>UUID</th>
-                    <th>Distance 1</th>
-                    <th>Distance 2</th>
-                    <th>Distance 3</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.uuid }}</td>
-                    <td>{{ user.Urssi1 }}</td>
-                    <td>{{ user.Urssi2 }}</td>
-                    <td>{{ user.Urssi3 }}</td>
-                    <td>{{ user.time }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
-    <div class="container mt-5">
-        <div class="row mb-3">
-            <div class="col text-right">
-                <a href="{{ url_for('createarea') }}" class="btn btn-create">New Area</a>
-                <a href="{{ url_for('createdoor') }}" class="btn btn-create">New Door</a>
-            </div>
+    <h1>Users:</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>UUID</th>
+                <th>Distance 1</th>
+                <th>Distance 2</th>
+                <th>Distance 3</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.name }}</td>
+                <td>{{ user.uuid }}</td>
+                <td>{{ user.Urssi1 }}</td>
+                <td>{{ user.Urssi2 }}</td>
+                <td>{{ user.Urssi3 }}</td>
+                <td>{{ user.time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col text-right">
+            <a href="{{ url_for('createarea') }}" class="btn btn-dark">New Area</a>
+            <a href="{{ url_for('createdoor') }}" class="btn btn-dark">New Door</a>
         </div>
-        <h1>Area:</h1>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Area</th>
-                    <th>Boundary 1</th>
-                    <th>Boundary 2</th>
-                    <th>Boundary 3</th>
-                    <th>Boundary 4</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for area in areas %}
-                <tr>
-                    <td>{{ area.name }}</td>
-                    <td>{{ area.arssi1n }}, {{ area.arssi2n }}, {{ area.arssi3n }}</td>
-                    <td>{{ area.arssi1s }}, {{ area.arssi2s }}, {{ area.arssi3s }}</td>
-                    <td>{{ area.arssi1e }}, {{ area.arssi2e }}, {{ area.arssi3e }}</td>
-                    <td>{{ area.arssi1w }}, {{ area.arssi2w }}, {{ area.arssi3w }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <h1>Door:</h1>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Door</th>
-                    <th>Assigned Area</th>
-                    <th>Entrance</th>
-                    <th>Exit</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for door in doors %}
-                <tr>
-                    <td>{{ door.name }}</td>
-                    <td>{{ door.area.name }}</td>
-                    <td>{{ door.drssi11 }}, {{ door.drssi12 }}, {{ door.drssi13 }}</td>
-                    <td>{{ door.drssi21 }}, {{ door.drssi22 }}, {{ door.drssi23 }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
-    <div class="container mt-5">
-        <div class="row mb-3">
-            <div class="col text-right">
-                <a href="{{ url_for('createuserarea') }}" class="btn btn-create">New Access</a>
-            </div>
+    <h1>Area:</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Area</th>
+                <th>Boundary 1</th>
+                <th>Boundary 2</th>
+                <th>Boundary 3</th>
+                <th>Boundary 4</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for area in areas %}
+            <tr>
+                <td>{{ area.name }}</td>
+                <td>{{ area.arssi1n }}, {{ area.arssi2n }}, {{ area.arssi3n }}</td>
+                <td>{{ area.arssi1s }}, {{ area.arssi2s }}, {{ area.arssi3s }}</td>
+                <td>{{ area.arssi1e }}, {{ area.arssi2e }}, {{ area.arssi3e }}</td>
+                <td>{{ area.arssi1w }}, {{ area.arssi2w }}, {{ area.arssi3w }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h1>Door:</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Door</th>
+                <th>Assigned Area</th>
+                <th>Entrance</th>
+                <th>Exit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for door in doors %}
+            <tr>
+                <td>{{ door.name }}</td>
+                <td>{{ door.area.name }}</td>
+                <td>{{ door.drssi11 }}, {{ door.drssi12 }}, {{ door.drssi13 }}</td>
+                <td>{{ door.drssi21 }}, {{ door.drssi22 }}, {{ door.drssi23 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col text-right">
+            <a href="{{ url_for('createuserarea') }}" class="btn btn-dark">New Access</a>
         </div>
-        <h1>User Area Access:</h1>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Area</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for userarea in userareas %}
-                <tr>
-                    <td>{{ userarea.user.name }}</td>
-                    <td>{{ userarea.area.name }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
-    
-    <script src="../static/jquery-3.7.0.min.js"></script>
-    <script src="../static/popper.min.js"></script>
-    <script src="../static/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <h1>User Area Access:</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Area</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for userarea in userareas %}
+            <tr>
+                <td>{{ userarea.user.name }}</td>
+                <td>{{ userarea.area.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
