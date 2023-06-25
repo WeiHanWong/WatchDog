@@ -45,6 +45,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
               if (httpResponseCode==200) 
               {
                 payload = http.getString();
+                payload.replace("\"", "");
               }
               http.end();
 
@@ -53,6 +54,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
               String httpRequestData = "probe="+probe+"&uuid="+oBeacon.getProximityUUID().toString().c_str()+"&urssi="+advertisedDevice.getRSSI()+"&time=" + payload;           
               httpResponseCode = http.POST(httpRequestData);
               http.end();
+
               Serial.printf("UUID: %s\n", oBeacon.getProximityUUID().toString().c_str());
               Serial.println(advertisedDevice.getRSSI());
               Serial.println(payload);
