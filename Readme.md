@@ -1,6 +1,6 @@
 # WatchDog
 
-## Database.
+## Prereq.
 
 **macOS/Linux**
 
@@ -8,6 +8,7 @@
 sudo apt install libpq-dev
 sudo apt install postgresql
 sudo apt install bluetooth libbluetooth-dev
+sudp apt install opencv-python
 sudo -i -u postgres
 psql
 \password
