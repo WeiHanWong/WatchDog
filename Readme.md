@@ -8,7 +8,8 @@
 sudo apt install libpq-dev
 sudo apt install postgresql
 sudo apt install bluetooth libbluetooth-dev
-sudp apt install opencv-python
+sudo apt install opencv-python
+pip install opencv-contrib-python
 sudo -i -u postgres
 psql
 \password
