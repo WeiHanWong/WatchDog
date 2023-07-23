@@ -18,8 +18,8 @@ def generate_uuid():
 app = Flask(__name__)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost:5432/watchdog'
-app.config['SECRET_KEY'] = ''
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:P0stgres@localhost:5432/watchdog'
+app.config['SECRET_KEY'] = '422718fe17b063bc6f00f386a0befa4846a58092eb1fe94f81b212fc4b4f813e'
 
 
 login_manager = LoginManager()
@@ -44,6 +44,8 @@ class User(db.Model):
     Urssi2 = db.Column(db.Integer, nullable=True)
     Urssi3 = db.Column(db.Integer, nullable=True)
     time = db.Column(db.String(50), nullable=False)
+    camera = db.Column(db.Integer, nullable=True)
+    capture = db.Column(db.String(50), nullable=False)
     userarea = db.relationship("UserArea", backref='user')
 
 class Area(db.Model):
@@ -324,6 +326,15 @@ def createuserarea():
     return render_template('createuserarea.html', form=form)
 
 
+@app.route('/createdefaultadmin', methods=['GET', 'POST'])
+@login_required
+def createdefaultadmin():
+    new_user = User(name="Admin", uuid="624fda32-5dd9-4600-bca2-9bd7cf1d6058", time=str(datetime.now()))
+    db.session.add(new_user)
+    db.session.commit()
+    return redirect(url_for('test'))
+
+
 @app.route('/api/urssi', methods=['GET', 'POST'])
 def process_data():
     try:
@@ -379,6 +390,17 @@ def doorops(arg):
 def gettime():
     response = {
         'time': str(datetime.now())
+    }
+    return jsonify(response), 200
+
+@app.route('/api/cameracapture', methods=['GET', 'POST'])
+def cameracapture():
+    user = User.query.filter_by(id=request.id.data()).first()
+    user.camera = request.camera.data()
+    user.capture = str(datetime.now())
+    db.session.commit()
+    response = {
+        'status': 'success'
     }
     return jsonify(response), 200
 
