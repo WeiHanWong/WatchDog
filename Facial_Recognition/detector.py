@@ -30,7 +30,7 @@ while True:
         else:
             id = "unknown"
             confidence = "  {0}%".format(round(100 - confidence))
-    print(str(id) + " " + str(confidence))
+        print(str(id) + " " + str(confidence))
     k = cv2.waitKey(10) & 0xff
     if k == 27:
         cam.release()
