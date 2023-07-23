@@ -11,10 +11,12 @@ import requests
 import time
 import threading
 
+
 def generate_uuid():
     return uuid.uuid4()
 
-#from flask_user import roles_required
+
+# from flask_user import roles_required
 app = Flask(__name__)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
@@ -25,6 +27,7 @@ app.config['SECRET_KEY'] = '422718fe17b063bc6f00f386a0befa4846a58092eb1fe94f81b2
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -72,6 +75,7 @@ class UserArea(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     area_id = db.Column(db.Integer, db.ForeignKey('area.id'))
 
+
 class Door(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
@@ -83,7 +87,6 @@ class Door(db.Model):
     drssi22 = db.Column(db.Integer, nullable=True)
     drssi23 = db.Column(db.Integer, nullable=True)
     
-
 
 class RegisterForm(FlaskForm):
     username = StringField(validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Username"})
@@ -167,6 +170,7 @@ class CreateUserAreaForm(FlaskForm):
 
     name = SelectField(validators=[InputRequired()])
     area = SelectField(validators=[InputRequired()])
+
     def __init__(self, *args, **kwargs):
         super(CreateUserAreaForm, self).__init__(*args, **kwargs)
         self.name.choices = [value[0] for value in User.query.with_entities(User.name)]
@@ -182,12 +186,6 @@ class CreateUserAreaForm(FlaskForm):
         existing_area = Area.query.filter_by(name=area.data).first()
         if not existing_area:
             raise ValidationError('Area does not exists!')
-
-"""
-@app.route('/')
-def home():
-    return render_template('home.html')
-"""
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -414,7 +412,6 @@ def checklocation(uuid):
         thread = threading.Thread(target=doorops, args=("open",))
         thread.start()
     
-
 
 # @app.after_request
 # def add_header(response):
