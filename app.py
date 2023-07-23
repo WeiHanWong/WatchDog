@@ -48,7 +48,7 @@ class User(db.Model):
     Urssi3 = db.Column(db.Integer, nullable=True)
     time = db.Column(db.String(50), nullable=False)
     camera = db.Column(db.Integer, nullable=True)
-    capture = db.Column(db.String(50), nullable=False)
+    capture = db.Column(db.String(50), nullable=True)
     userarea = db.relationship("UserArea", backref='user')
 
 class Area(db.Model):
