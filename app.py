@@ -393,8 +393,9 @@ def gettime():
 
 @app.route('/api/cameracapture', methods=['GET', 'POST'])
 def cameracapture():
-    user = User.query.filter_by(id=request.id.data()).first()
-    user.camera = request.camera.data()
+    request_data = request.get_json()
+    user = User.query.filter_by(id=request_data['id']).first()
+    user.camera = request_data['camera']
     user.capture = str(datetime.now())
     db.session.commit()
     response = {
