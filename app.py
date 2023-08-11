@@ -20,8 +20,8 @@ def generate_uuid():
 app = Flask(__name__)
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:P0stgres@localhost:5432/watchdog'
-app.config['SECRET_KEY'] = '422718fe17b063bc6f00f386a0befa4846a58092eb1fe94f81b212fc4b4f813e'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:X@localhost:5432/watchdog'
+app.config['SECRET_KEY'] = 'X'
 
 
 login_manager = LoginManager()
